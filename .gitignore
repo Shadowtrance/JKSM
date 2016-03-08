@@ -1,0 +1,15 @@
+build/
+test/
+*.o
+*.elf
+*.3dsx
+*.png
+*.wav
+*.cbp
+*.layout
+*.smdh
+*.exe
+*.log
+*.txt
+*.xml
+*.7z
