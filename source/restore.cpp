@@ -17,7 +17,7 @@ void copyFiletoArch(FS_Archive arch, const std::u16string from, const std::u16st
 {
     Handle sdFile, archFile;
     FSUSER_OpenFile(&sdFile, sdArch, fsMakePath(PATH_UTF16, from.data()), FS_OPEN_READ, 0);
-    if(mode != MODE_EXTDATA && mode != MODE_BOSS)
+    if(mode != MODE_EXTDATA && mode != MODE_BOSS && mode!=MODE_SHARED)
         FSUSER_OpenFile(&archFile, arch, fsMakePath(PATH_UTF16, to.data()), FS_OPEN_CREATE | FS_OPEN_WRITE, 0);
     else
         FSUSER_OpenFile(&archFile, arch, fsMakePath(PATH_UTF16, to.data()), FS_OPEN_WRITE, 0);
@@ -94,8 +94,10 @@ bool restoreData(const titleData dat, FS_Archive arch, int mode)
             sdPath = tou16("/JKSV/Boss/");
             break;
         case MODE_SYSSAVE:
-            sdPath = tou16("/JKSV/SysSave");
+            sdPath = tou16("/JKSV/SysSave/");
             break;
+        case MODE_SHARED:
+            sdPath = tou16("/JKSV/Shared/");
     }
     sdPath += dat.nameSafe;
     sdPath += L'/';
@@ -107,7 +109,7 @@ bool restoreData(const titleData dat, FS_Archive arch, int mode)
 
     copyDirToArch(arch, sdPath, archPath, mode);
 
-    if(mode!=MODE_EXTDATA && mode!=MODE_BOSS)
+    if(mode!=MODE_EXTDATA && mode!=MODE_BOSS && mode!=MODE_SHARED)
         FSUSER_ControlArchive(arch, ARCHIVE_ACTION_COMMIT_SAVE_DATA, NULL, 0, NULL, 0);
 
     deleteSV(dat);

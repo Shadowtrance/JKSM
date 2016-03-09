@@ -42,6 +42,8 @@ std::string GetSlot(bool nSlot, const titleData dat, int Mode)
         case MODE_SYSSAVE:
             Path = tou16("/JKSV/SysSave/");
             break;
+        case MODE_SHARED:
+            Path = tou16("/JKSV/Shared/");
     }
     Path += dat.nameSafe;
     Path += L'/';
@@ -71,7 +73,7 @@ std::string GetSlot(bool nSlot, const titleData dat, int Mode)
 
         if(KeyUp & KEY_A)
         {
-            if((getSlot.getSelected() + 1) > list.count())
+            if((u32)(getSlot.getSelected() + 1) > list.count())
             {
                 Ret = GetString();
                 return Ret;

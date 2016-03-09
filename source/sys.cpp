@@ -50,6 +50,8 @@ void sysInit()
     aptInit();
     srvInit();
     hidInit();
+    fsInit();
+    sdmcInit();
 
     //Open SDMC archive
     sdArch = (FS_Archive){ARCHIVE_SDMC, (FS_Path){PATH_EMPTY, 1, ""}};
@@ -66,6 +68,7 @@ void sysInit()
     createDir("/JKSV/ExtData");
     createDir("/JKSV/SysSave");
     createDir("/JKSV/Boss");
+    createDir("/JKSV/Shared");
 }
 
 void sysExit()
@@ -78,6 +81,8 @@ void sysExit()
     aptExit();
     srvExit();
     hidExit();
+    fsExit();
+    sdmcExit();
 
     freeImgs();
 

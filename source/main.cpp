@@ -12,12 +12,14 @@
 #include "nand.h"
 #include "cart.h"
 #include "extra.h"
+#include "shared.h"
 
 enum
 {
     _cart,
     _cia,
     _sys,
+    _shared,
     _refresh,
     _extra,
     _exit
@@ -30,12 +32,13 @@ int main(int argc, const char *argv[])
     nandTitlesInit();
     logOpen();
 
-    std::u32string info = U"JKSM 3/7/2016";
+    std::u32string info = U"JKSM 3/8/2016";
 
     menu mainMenu(128, 80, false);
     mainMenu.addItem("Cartridge");
     mainMenu.addItem("SD/CIA");
     mainMenu.addItem("System Titles");
+    mainMenu.addItem("Shared ExtData");
     mainMenu.addItem("Refresh Games");
     mainMenu.addItem("Extras");
     mainMenu.addItem("Exit");
@@ -62,6 +65,9 @@ int main(int argc, const char *argv[])
                     break;
                 case _sys:
                     nandStartSelect();
+                    break;
+                case _shared:
+                    sharedExtManager();
                     break;
                 case _refresh:
                     FSUSER_DeleteFile(sdArch, fsMakePath(PATH_ASCII, "/JKSV/titles"));

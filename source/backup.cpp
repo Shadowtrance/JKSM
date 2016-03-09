@@ -118,6 +118,9 @@ bool backupData(const titleData dat, FS_Archive arch, int mode)
         case MODE_SYSSAVE:
             pathOut = tou16("/JKSV/SysSave/");
             break;
+        case MODE_SHARED:
+            pathOut = tou16("/JKSV/Shared/");
+            break;
     }
 
     pathOut += dat.nameSafe;

@@ -18,6 +18,7 @@ void textboxInit()
 void textboxExit()
 {
     sf2d_free_texture(tbox);
+    sf2d_free_texture(tboxdown);
 }
 
 textbox::textbox(int x, int y, int width, int height, const char *text)

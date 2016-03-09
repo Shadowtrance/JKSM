@@ -12,6 +12,7 @@
 #define MODE_EXTDATA 1
 #define MODE_SYSSAVE 2
 #define MODE_BOSS 3
+#define MODE_SHARED 4
 
 //This is the font used to print everything
 extern sftd_font *yashi;

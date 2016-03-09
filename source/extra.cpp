@@ -30,6 +30,8 @@ void maxPlayCoins()
 
         FSFILE_Write(coin, NULL, 0, buff, size, FS_WRITE_FLUSH);
 
+        FSFILE_Close(coin);
+
         delete[] buff;
 
         showMessage("Play coins set to 300!");
@@ -56,6 +58,8 @@ void zeroPlayCoins()
         buff[0x5] = 0;
 
         FSFILE_Write(coin, NULL, 0, buff, size, FS_WRITE_FLUSH);
+
+        FSFILE_Close(coin);
 
         delete[] buff;
 

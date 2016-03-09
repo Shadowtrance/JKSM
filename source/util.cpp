@@ -54,6 +54,9 @@ void createTitleDir(const titleData t, int mode)
         case MODE_SYSSAVE:
             create = tou16("/JKSV/SysSave/");
             break;
+        case MODE_SHARED:
+            create = tou16("/JKSV/Shared/");
+            break;
     }
 
     create += t.nameSafe;

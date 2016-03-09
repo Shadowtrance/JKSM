@@ -12,9 +12,9 @@ bool confirm(const char *t)
 {
     bool ret = false;
 
-    button yes("Yes (A)", 40, 168);
-    button no("No (B)", 184, 168);
-    textbox back(32, 32, 256, 176, t);
+    button yes("Yes (A)", 40, 176);
+    button no("No (B)", 180, 176);
+    textbox back(24, 24, 280, 200, t);
     while(aptMainLoop())
     {
         hidScanInput();
@@ -49,8 +49,8 @@ bool confirm(const char *t)
 
 void showMessage(const char *t)
 {
-    button ok("OK (A)", 112, 168);
-    textbox back(32, 32, 256, 176, t);
+    button ok("OK (A)", 116, 176);
+    textbox back(24, 24, 280, 200, t);
 
     while(aptMainLoop())
     {
@@ -89,7 +89,7 @@ void progressBarExit()
 
 progressBar::progressBar(float _max, const char *t)
 {
-    back = new textbox(32, 32, 256, 176, t);
+    back = new textbox(24, 24, 280, 200, t);
     max = _max;
 }
 
@@ -101,9 +101,9 @@ progressBar::~progressBar()
 void progressBar::draw(float cur)
 {
     float prog = (float)(cur / max) * 100;
-    float xScale = (float)(prog * 120) / 100;
+    float xScale = (float)(prog * 128) / 100;
 
     back->draw(false);
-    sf2d_draw_texture_scale(progEmpty, back->X + 8, back->Y + 152, 120, 1);
-    sf2d_draw_texture_scale(progFull, back->X + 8, back->Y + 152, xScale, 1);
+    sf2d_draw_texture_scale(progEmpty, back->X + 8, back->Y + 168, 128, 1);
+    sf2d_draw_texture_scale(progFull, back->X + 8, back->Y + 168, xScale, 1);
 }
