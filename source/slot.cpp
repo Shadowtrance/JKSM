@@ -12,6 +12,7 @@
 #include "global.h"
 #include "util.h"
 #include "ui.h"
+#include "button.h"
 
 std::string ConvertToString(const std::u16string c)
 {
@@ -28,23 +29,7 @@ std::string GetSlot(bool nSlot, const titleData dat, int Mode)
 
     //Path
     std::u16string Path;
-    switch(Mode)
-    {
-        case MODE_SAVE:
-            Path = tou16("/JKSV/Saves/");
-            break;
-        case MODE_EXTDATA:
-            Path = tou16("/JKSV/ExtData/");
-            break;
-        case MODE_BOSS:
-            Path = tou16("/JKSV/Boss/");
-            break;
-        case MODE_SYSSAVE:
-            Path = tou16("/JKSV/SysSave/");
-            break;
-        case MODE_SHARED:
-            Path = tou16("/JKSV/Shared/");
-    }
+    Path = getPath(Mode);
     Path += dat.nameSafe;
     Path += L'/';
 
@@ -62,12 +47,18 @@ std::string GetSlot(bool nSlot, const titleData dat, int Mode)
     if(nSlot)
         getSlot.addItem("New");
 
+    button help("Help", 224, 208);
+
     bool Loop = true;
-    std::u32string info = U"Select Folder. X = Rename. Y = Delete. B = Cancel";
+    std::u32string info = tou32(dat.name) + modeText(Mode);
+    std::string helpText = "Select Folder. X = Rename. Y = Delete. B = Cancel";
     while(Loop)
     {
         hidScanInput();
         u32 KeyUp = hidKeysUp();
+
+        touchPosition pos;
+        hidTouchRead(&pos);
 
         getSlot.handleInput(KeyUp);
 
@@ -132,6 +123,10 @@ std::string GetSlot(bool nSlot, const titleData dat, int Mode)
                     getSlot.addItem("New");
             }
         }
+        else if(help.released(pos))
+        {
+            showMessage(helpText.c_str());
+        }
         else if(KeyUp & KEY_B)
         {
             return "";
@@ -143,6 +138,7 @@ std::string GetSlot(bool nSlot, const titleData dat, int Mode)
         sf2d_end_frame();
 
         sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+            help.draw();
         sf2d_end_frame();
 
         sf2d_swapbuffers();

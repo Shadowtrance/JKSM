@@ -98,7 +98,7 @@ void nandBackup(const titleData dat)
                     if(openSysSave(&arch, dat))
                     {
                         createTitleDir(dat, MODE_SYSSAVE);
-                        backupData(dat, arch, MODE_SYSSAVE);
+                        backupData(dat, arch, MODE_SYSSAVE, false);
                     }
                     break;
                 case _impSys:
@@ -108,14 +108,14 @@ void nandBackup(const titleData dat)
                     }
                     break;
                 case _expExt:
-                    if(openExtdata(&arch, dat))
+                    if(openExtdata(&arch, dat, true))
                     {
                         createTitleDir(dat, MODE_EXTDATA);
-                        backupData(dat, arch, MODE_EXTDATA);
+                        backupData(dat, arch, MODE_EXTDATA, false);
                     }
                     break;
                 case _impExt:
-                    if(openExtdata(&arch, dat))
+                    if(openExtdata(&arch, dat, true))
                     {
                         restoreData(dat, arch, MODE_EXTDATA);
                     }
@@ -124,7 +124,7 @@ void nandBackup(const titleData dat)
                     if(openBossExt(&arch, dat))
                     {
                         createTitleDir(dat, MODE_BOSS);
-                        backupData(dat, arch, MODE_BOSS);
+                        backupData(dat, arch, MODE_BOSS, false);
                     }
                     break;
                 case _impBoss:

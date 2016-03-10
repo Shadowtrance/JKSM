@@ -42,6 +42,7 @@ void copyFiletoArch(FS_Archive arch, const std::u16string from, const std::u16st
 void copyDirToArch(FS_Archive arch, const std::u16string from, const std::u16string to, int mode)
 {
     dirList list(sdArch, from);
+    progressBar rest(list.count(), "Importing data...");
     for(unsigned i = 0; i < list.count(); i++)
     {
         if(list.isDir(i))
@@ -66,6 +67,12 @@ void copyDirToArch(FS_Archive arch, const std::u16string from, const std::u16str
 
             copyFiletoArch(arch, sdPath, archPath, mode);
         }
+
+        sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+            rest.draw(i);
+        sf2d_end_frame();
+
+        sf2d_swapbuffers();
     }
 }
 
@@ -82,23 +89,7 @@ bool restoreData(const titleData dat, FS_Archive arch, int mode)
     if(!confirm(ask.c_str()))
         return false;
 
-    switch(mode)
-    {
-        case MODE_SAVE:
-            sdPath = tou16("/JKSV/Saves/");
-            break;
-        case MODE_EXTDATA:
-            sdPath = tou16("/JKSV/ExtData/");
-            break;
-        case MODE_BOSS:
-            sdPath = tou16("/JKSV/Boss/");
-            break;
-        case MODE_SYSSAVE:
-            sdPath = tou16("/JKSV/SysSave/");
-            break;
-        case MODE_SHARED:
-            sdPath = tou16("/JKSV/Shared/");
-    }
+    sdPath = getPath(mode);
     sdPath += dat.nameSafe;
     sdPath += L'/';
     sdPath += tou16(keepName.c_str());
@@ -107,12 +98,21 @@ bool restoreData(const titleData dat, FS_Archive arch, int mode)
     std::u16string archPath;
     archPath += L'/';
 
+    deleteSV(dat);
+
+    FSUSER_DeleteDirectoryRecursively(arch, fsMakePath(PATH_ASCII, "/"));
+
     copyDirToArch(arch, sdPath, archPath, mode);
 
     if(mode!=MODE_EXTDATA && mode!=MODE_BOSS && mode!=MODE_SHARED)
-        FSUSER_ControlArchive(arch, ARCHIVE_ACTION_COMMIT_SAVE_DATA, NULL, 0, NULL, 0);
-
-    deleteSV(dat);
+    {
+        Result res = FSUSER_ControlArchive(arch, ARCHIVE_ACTION_COMMIT_SAVE_DATA, NULL, 0, NULL, 0);
+        if(res)
+        {
+            showMessage("Error committing save data!");
+            logWriteError("ControlArchive Error", res);
+        }
+    }
 
     showMessage("Complete!");
 

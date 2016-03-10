@@ -10,6 +10,7 @@
 #include "titles.h"
 #include "db.h"
 #include "ui.h"
+#include "global.h"
 
 std::vector<titleData> sdTitle;
 std::vector<titleData> nandTitle;
@@ -70,7 +71,7 @@ void sdTitlesInit()
             u32 high = (u32)(ids[i] >> 32);
             //0x00040000 = games
             //0x00040002 = demos
-            if((high==0x00040000 || high==0x00040002) && !hbFilter(ids[i]))
+            if( ((high==0x00040000 || high==0x00040002) && !hbFilter(ids[i])) || devMode)
             {
                 titleData newTitle;
                 if(newTitle.init(ids[i], MEDIATYPE_SD))
@@ -105,6 +106,15 @@ bool nandFilter(u64 id)
     return false;
 }
 
+void sysSaveRedirect(titleData *dat)
+{
+    //this is for browser and ar games
+    if(dat->low > 0x20000000)
+        dat->unique = (0x0000FFFF & dat->unique);
+    if(dat->low==0x2002CF00)
+        dat->unique = 0x0000008F;
+}
+
 void nandTitlesInit()
 {
     nandTitle.clear();
@@ -114,7 +124,11 @@ void nandTitlesInit()
         u32 count = dbGetCount(read);
 
         for(unsigned i = 0; i < count; i++)
-            nandTitle.push_back(dbGetData(read));
+        {
+            titleData newNand = dbGetData(read);
+            sysSaveRedirect(&newNand);
+            nandTitle.push_back(newNand);
+        }
 
         fclose(read);
     }
@@ -129,11 +143,14 @@ void nandTitlesInit()
         progressBar load((float)count, "Loading NAND titles...");
         for(unsigned i = 0; i < count; i++)
         {
-            if(!nandFilter(ids[i]) && ids[i]!=0)
+            if(!(nandFilter(ids[i]) && ids[i]!=0) || devMode)
             {
                 titleData newData;
                 if(newData.init(ids[i], MEDIATYPE_NAND) && newData.name[0]!=0)
+                {
+                    sysSaveRedirect(&newData);
                     nandTitle.push_back(newData);
+                }
             }
 
             sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);

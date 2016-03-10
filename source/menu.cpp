@@ -146,6 +146,19 @@ void menu::handleInput(u32 key)
         else
             opts[selected].selected = true;
     }
+    else if((key & KEY_R) && multi)
+    {
+        if(opts[0].selected && opts[1].selected)
+        {
+            for(unsigned i = 0; i < opts.size(); i++)
+                opts[i].selected = false;
+        }
+        else
+        {
+            for(unsigned i = 0; i < opts.size(); i++)
+                opts[i].selected = true;
+        }
+    }
 
 }
 
@@ -158,4 +171,26 @@ void menu::reset()
 int menu::getSelected()
 {
     return selected;
+}
+
+unsigned menu::getSize()
+{
+    return opts.size();
+}
+
+unsigned menu::getSelectCount()
+{
+    unsigned ret = 0;
+    for(unsigned i = 0; i < opts.size(); i++)
+    {
+        if(opts[i].selected)
+            ret++;
+    }
+
+    return ret;
+}
+
+bool menu::optSelected(int i)
+{
+    return opts[i].selected;
 }

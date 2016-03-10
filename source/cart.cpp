@@ -84,33 +84,34 @@ void cartManager()
             switch(cartMenu.getSelected())
             {
                 case _expSave:
-                    if(openSaveArch(&archive, cartData))
+                    if(openSaveArch(&archive, cartData, true))
                     {
                         createTitleDir(cartData, MODE_SAVE);
-                        backupData(cartData, archive, MODE_SAVE);
+                        backupData(cartData, archive, MODE_SAVE, false);
                     }
                     break;
                 case _impSave:
-                    if(openSaveArch(&archive, cartData))
+                    if(openSaveArch(&archive, cartData, true))
                     {
                         restoreData(cartData, archive, MODE_SAVE);
                     }
                     break;
                 case _delSave:
-                    if(openSaveArch(&archive, cartData) && confirm("This will delete save data present on cart. Continue?"))
+                    if(openSaveArch(&archive, cartData, true) && confirm("This will delete save data present on cart. Continue?"))
                     {
                         FSUSER_DeleteDirectoryRecursively(archive, fsMakePath(PATH_ASCII, "/"));
+                        FSUSER_ControlArchive(archive, ARCHIVE_ACTION_COMMIT_SAVE_DATA, NULL, 0, NULL, 0);
                     }
                     break;
                 case _expExt:
-                    if(openExtdata(&archive, cartData))
+                    if(openExtdata(&archive, cartData, true))
                     {
                         createTitleDir(cartData, MODE_EXTDATA);
-                        backupData(cartData, archive, MODE_EXTDATA);
+                        backupData(cartData, archive, MODE_EXTDATA, false);
                     }
                     break;
                 case _impExt:
-                    if(openExtdata(&archive, cartData))
+                    if(openExtdata(&archive, cartData, true))
                     {
                         restoreData(cartData, archive, MODE_EXTDATA);
                     }

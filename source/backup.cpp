@@ -9,6 +9,7 @@
 #include "util.h"
 #include "slot.h"
 #include "ui.h"
+#include "date.h"
 
 //this is the buffer size used for copying
 #define buff_size 51200
@@ -40,6 +41,12 @@ void copyFileToSD(FS_Archive save, const std::u16string from, const std::u16stri
     //buffer for data
     u8 *buff = new u8[buff_size];
 
+    u64 fSize;
+    FSFILE_GetSize(saveFile, &fSize);
+
+    //show what's being copied
+    std::string copyString = "Copying " + toString(from) + "...";
+    progressBar fileProg((float)fSize, copyString.c_str());
     //loop through file until finished
     do
     {
@@ -48,6 +55,11 @@ void copyFileToSD(FS_Archive save, const std::u16string from, const std::u16stri
         FSFILE_Write(sdFile, NULL, offset, buff, read, FS_WRITE_FLUSH);
 
         offset += read;
+
+        sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+            fileProg.draw(offset);
+        sf2d_end_frame();
+        sf2d_swapbuffers();
     }while(read > 0);
 
     delete[] buff;
@@ -61,7 +73,6 @@ void copyDirToSD(FS_Archive save, const std::u16string from, const std::u16strin
     //Use dirList to get list of dir
     dirList list(save, from);
 
-    progressBar prog((float)list.count(), "Copying data...");
     for(unsigned i = 0; i < list.count(); i++)
     {
         if(list.isDir(i))
@@ -87,57 +98,43 @@ void copyDirToSD(FS_Archive save, const std::u16string from, const std::u16strin
 
             copyFileToSD(save, fullFrom, fullTo);
         }
-
-        sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-            prog.draw(i);
-        sf2d_end_frame();
-
-        sf2d_swapbuffers();
     }
 }
 
-bool backupData(const titleData dat, FS_Archive arch, int mode)
+bool backupData(const titleData dat, FS_Archive arch, int mode, bool autoName)
 {
     std::u16string pathOut;
-    std::u16string slot = tou16(GetSlot(true, dat, mode).c_str());
+    std::u16string slot;
+    if(autoName)
+        slot = tou16(GetDate(FORMAT_DMY));
+    else
+        slot = tou16(GetSlot(true, dat, mode).c_str());
 
     if(slot.data()[0]==0)
         return false;
 
-    switch(mode)
-    {
-        case MODE_SAVE:
-            pathOut = tou16("/JKSV/Saves/");
-            break;
-        case MODE_EXTDATA:
-            pathOut = tou16("/JKSV/ExtData/");
-            break;
-        case MODE_BOSS:
-            pathOut = tou16("/JKSV/Boss/");
-            break;
-        case MODE_SYSSAVE:
-            pathOut = tou16("/JKSV/SysSave/");
-            break;
-        case MODE_SHARED:
-            pathOut = tou16("/JKSV/Shared/");
-            break;
-    }
-
+    pathOut = getPath(mode);
     pathOut += dat.nameSafe;
     pathOut += L'/';
 
     pathOut += slot;
-
-    FSUSER_CreateDirectory(sdArch, fsMakePath(PATH_UTF16, pathOut.data()), 0);
-
+    std::u16string recreate = pathOut;//need this later after directory is deleted.
     pathOut += L'/';
 
+    //I only do this because games use more files for more slots.
+    FSUSER_DeleteDirectoryRecursively(sdArch, fsMakePath(PATH_UTF16, pathOut.data()));
+    //recreate it.
+    FSUSER_CreateDirectory(sdArch, fsMakePath(PATH_UTF16, recreate.data()), 0);
+
+    //save archive root
     std::u16string pathIn;
     pathIn += L'/';
 
     copyDirToSD(arch, pathIn, pathOut);
 
-    showMessage("Complete!");
+    //This gets annoying in auto mode
+    if(!autoName)
+        showMessage("Complete!");
 
     return true;
 }

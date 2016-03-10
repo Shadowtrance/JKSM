@@ -12,6 +12,8 @@ sf2d_texture *bar;
 
 FS_Archive sdArch;
 
+bool devMode = false;
+
 void drawTopBar(const std::u32string nfo)
 {
     sf2d_draw_texture_scale(bar, 0, 0, 25, 1);

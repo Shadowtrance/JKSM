@@ -6,6 +6,7 @@
 #include "util.h"
 #include "titledata.h"
 #include "dir.h"
+#include "ui.h"
 
 std::u32string tou32(const std::u16string t)
 {
@@ -19,6 +20,30 @@ std::u32string tou32(const std::u16string t)
 
     delete[] tmp;
 
+    return ret;
+}
+
+std::u32string modeText(int mode)
+{
+    std::u32string ret;
+    switch(mode)
+    {
+        case MODE_SAVE:
+            ret = tou32(tou16(" : Save"));
+            break;
+        case MODE_EXTDATA:
+            ret = tou32(tou16(" : ExtData"));
+            break;
+        case MODE_BOSS:
+            ret = tou32(tou16(" : Boss ExtData"));
+            break;
+        case MODE_SYSSAVE:
+            ret = tou32(tou16(" : System Save"));
+            break;
+        case MODE_SHARED:
+            ret = tou32(tou16(" : Shared ExtData"));
+            break;
+    }
     return ret;
 }
 
@@ -37,29 +62,19 @@ std::u16string tou16(const char *t)
     return ret;
 }
 
+//this is bad
+std::string toString(const std::u16string t)
+{
+    std::string ret;
+    for(unsigned i = 0; i < t.length();i++)
+        ret += t.data()[i];
+
+    return ret;
+}
+
 void createTitleDir(const titleData t, int mode)
 {
-    std::u16string create;
-    switch(mode)
-    {
-        case MODE_SAVE:
-            create = tou16("/JKSV/Saves/");
-            break;
-        case MODE_EXTDATA:
-            create = tou16("/JKSV/ExtData/");
-            break;
-        case MODE_BOSS:
-            create = tou16("/JKSV/Boss/");
-            break;
-        case MODE_SYSSAVE:
-            create = tou16("/JKSV/SysSave/");
-            break;
-        case MODE_SHARED:
-            create = tou16("/JKSV/Shared/");
-            break;
-    }
-
-    create += t.nameSafe;
+    std::u16string create = getPath(mode) + t.nameSafe;
 
     FSUSER_CreateDirectory(sdArch, fsMakePath(PATH_UTF16, create.data()), 0);
 }
@@ -69,5 +84,34 @@ void deleteSV(const titleData t)
     u64 in = ((u64)SECUREVALUE_SLOT_SD << 32) | (t.unique << 8);
     u8 out;
 
-    FSUSER_ControlSecureSave(SECURESAVE_ACTION_DELETE, &in, 8, &out, 1);
+    Result res = FSUSER_ControlSecureSave(SECURESAVE_ACTION_DELETE, &in, 8, &out, 1);
+    if(res)
+    {
+        showMessage("Failed to delete secure value!");
+        logWriteError("DeleteSV", res);
+    }
+}
+
+std::u16string getPath(int mode)
+{
+    std::u16string ret;
+    switch(mode)
+    {
+        case MODE_SAVE:
+            ret = tou16("/JKSV/Saves/");
+            break;
+        case MODE_EXTDATA:
+            ret = tou16("/JKSV/ExtData/");
+            break;
+        case MODE_BOSS:
+            ret = tou16("/JKSV/Boss/");
+            break;
+        case MODE_SYSSAVE:
+            ret = tou16("/JKSV/SysSave/");
+            break;
+        case MODE_SHARED:
+            ret = tou16("/JKSV/Shared/");
+            break;
+    }
+    return ret;
 }

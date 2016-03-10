@@ -8,7 +8,7 @@
 //All the information used here was found on 3dbrew.org
 //thank them too.
 
-bool openSaveArch(FS_Archive *out, const titleData dat)
+bool openSaveArch(FS_Archive *out, const titleData dat, bool showError)
 {
     //binary path
     u32 path[3];
@@ -24,7 +24,8 @@ bool openSaveArch(FS_Archive *out, const titleData dat)
     Result res = FSUSER_OpenArchive(out);
     if(res)
     {
-        showMessage("Error opening save archive!");
+        if(showError)
+            showMessage("Error opening save archive!");
         logWriteError("Error opening save archive", res);
         return false;
     }
@@ -32,7 +33,7 @@ bool openSaveArch(FS_Archive *out, const titleData dat)
     return true;
 }
 
-bool openExtdata(FS_Archive *out, const titleData dat)
+bool openExtdata(FS_Archive *out, const titleData dat, bool showError)
 {
     u32 path[3];
     path[0] = MEDIATYPE_SD;//always sd for extdata
@@ -43,7 +44,8 @@ bool openExtdata(FS_Archive *out, const titleData dat)
     Result res = FSUSER_OpenArchive(out);
     if(res)
     {
-        showMessage("Error opening ExtData! Title may not use it.");
+        if(showError)
+            showMessage("Error opening ExtData! Title may not use it.");
         return false;
     }
 

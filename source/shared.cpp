@@ -67,7 +67,7 @@ void sharedBackupMenu(const titleData dat, FS_Archive arch)
             {
                 case _exp:
                     createTitleDir(dat, MODE_SHARED);
-                    backupData(dat, arch, MODE_SHARED);
+                    backupData(dat, arch, MODE_SHARED, false);
                     break;
                 case _imp:
                     restoreData(dat, arch, MODE_SHARED);

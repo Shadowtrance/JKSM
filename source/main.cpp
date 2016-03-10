@@ -28,11 +28,17 @@ enum
 int main(int argc, const char *argv[])
 {
     sysInit();
+
+    hidScanInput();
+    u32 held = hidKeysHeld();
+    if((held & KEY_R) && (held & KEY_L))
+        devMode = true;
+
     sdTitlesInit();
     nandTitlesInit();
     logOpen();
 
-    std::u32string info = U"JKSM 3/8/2016";
+    std::u32string info = U"JKSM 3/10/2016";
 
     menu mainMenu(128, 80, false);
     mainMenu.addItem("Cartridge");
@@ -43,6 +49,8 @@ int main(int argc, const char *argv[])
     mainMenu.addItem("Extras");
     mainMenu.addItem("Exit");
 
+    //I use this to break the loop from inside switches.
+    //You could use a goto too, but I was always told goto is da devil
     bool loop = true;
 
     while(aptMainLoop() && loop)

@@ -25,6 +25,10 @@ class menu
         int getSelected();
         void reset();
 
+        unsigned getSize();
+        unsigned getSelectCount();
+        bool optSelected(int i);
+
         void draw();
 
         void handleInput(u32 key);

@@ -26,4 +26,6 @@ extern FS_Archive sdArch;
 //This draws the bar you see at the top
 void drawTopBar(const std::u32string nfo);
 
+//Turns off filters and other stuff
+extern bool devMode;
 #endif

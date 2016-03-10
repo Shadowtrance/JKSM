@@ -59,6 +59,6 @@ void textbox::draw(bool Pressed)
     sf2d_draw_texture_part_scale(UseTex, X + 16, (Y + 16) + (16 * yScale), 16, 32, 16, 16, xScale, 1);
     sf2d_draw_texture_part(UseTex, (X + 16) + (16 * xScale), (Y + 16) + (16 * yScale), 32, 32, 16, 16);
 
-    sftd_draw_text_wrap(yashi, X + 8, Y + 6, RGBA8(0, 0, 0, 255), 14, (X + Width), Text.c_str());
+    sftd_draw_text_wrap(yashi, X + 8, Y + 6, RGBA8(0, 0, 0, 255), 14, (X + Width - 8), Text.c_str());
 
 }
