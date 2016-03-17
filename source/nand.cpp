@@ -19,14 +19,14 @@ void nandBackup(const titleData dat);
 
 void nandStartSelect()
 {
-    menu nandMenu(80, 20, true);
+    menu nandMenu(88, 20, false);
     for(unsigned i = 0; i < nandTitle.size(); i++)
         nandMenu.addItem(nandTitle[i].name);
 
     std::u32string info = U"Select a title";
     bool loop = true;
 
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 
@@ -81,7 +81,7 @@ void nandBackup(const titleData dat)
     std::u32string info = tou32(dat.name);
     info += U" : NAND";
 
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 

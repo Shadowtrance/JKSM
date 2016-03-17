@@ -10,9 +10,9 @@
 #include "img.h"
 #include "global.h"
 
-using namespace std;
-
 //This is my shitty quick keyboard. Probably should've used hbkblib, but I wanted to play with the touch screen.
+//I need to clean this up sometime
+//Still a bit weird from first release
 
 const char Qwerty[] =
 {
@@ -201,7 +201,7 @@ void KeyBoard::Add(const char *Add)
     Enter += Add;
 }
 
-string KeyBoard::RetString()
+std::string KeyBoard::RetString()
 {
     return Enter;
 }

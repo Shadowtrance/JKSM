@@ -45,15 +45,15 @@ enum
 
 void sharedBackupMenu(const titleData dat, FS_Archive arch)
 {
-    menu backupMenu(128, 80, false);
-    backupMenu.addItem("Export");
-    backupMenu.addItem("Import");
+    menu backupMenu(136, 80, false);
+    backupMenu.addItem("Export Data");
+    backupMenu.addItem("Import Data");
     backupMenu.addItem("Back");
 
     std::u32string info = tou32(dat.nameSafe) + U" : Shared Extdata";
 
     bool loop = true;
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 
@@ -107,7 +107,7 @@ void sharedExtManager()
 
     std::u32string info = U"Shared ExtData";
     bool loop = true;
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 

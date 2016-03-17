@@ -38,9 +38,9 @@ int main(int argc, const char *argv[])
     nandTitlesInit();
     logOpen();
 
-    std::u32string info = U"JKSM 3/10/2016";
+    std::u32string info = U"JKSM 3/17/2016";
 
-    menu mainMenu(128, 80, false);
+    menu mainMenu(136, 80, false);
     mainMenu.addItem("Cartridge");
     mainMenu.addItem("SD/CIA");
     mainMenu.addItem("System Titles");

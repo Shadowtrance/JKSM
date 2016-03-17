@@ -11,13 +11,12 @@
 #include "util.h"
 #include "ui.h"
 
-#define buff_size 51200
-
 void copyFiletoArch(FS_Archive arch, const std::u16string from, const std::u16string to, int mode)
 {
     Handle sdFile, archFile;
     FSUSER_OpenFile(&sdFile, sdArch, fsMakePath(PATH_UTF16, from.data()), FS_OPEN_READ, 0);
-    if(mode != MODE_EXTDATA && mode != MODE_BOSS && mode!=MODE_SHARED)
+    //OpenFile will fail FS_OPEN_CREATE in ExtData
+    if(mode != MODE_EXTDATA && mode != MODE_BOSS && mode != MODE_SHARED)
         FSUSER_OpenFile(&archFile, arch, fsMakePath(PATH_UTF16, to.data()), FS_OPEN_CREATE | FS_OPEN_WRITE, 0);
     else
         FSUSER_OpenFile(&archFile, arch, fsMakePath(PATH_UTF16, to.data()), FS_OPEN_WRITE, 0);
@@ -25,12 +24,24 @@ void copyFiletoArch(FS_Archive arch, const std::u16string from, const std::u16st
     u32 read = 0;
     u64 offset = 0;
 
+    u64 size;
+    FSFILE_GetSize(sdFile, &size);
+
     u8 *buff = new u8[buff_size];
+    std::string copyString = "Copying " + toString(from) + "...";
+    progressBar fileProg((float)size, copyString.c_str());
     do
     {
         FSFILE_Read(sdFile, &read, offset, buff, buff_size);
         FSFILE_Write(archFile, NULL, offset, buff, read, FS_WRITE_FLUSH);
         offset += read;
+
+        //I only do this so people don't think it froze on larger files.
+        sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
+            fileProg.draw(offset);
+        sf2d_end_frame();
+
+        sf2d_swapbuffers();
     }while(read > 0);
 
     delete[] buff;
@@ -42,7 +53,6 @@ void copyFiletoArch(FS_Archive arch, const std::u16string from, const std::u16st
 void copyDirToArch(FS_Archive arch, const std::u16string from, const std::u16string to, int mode)
 {
     dirList list(sdArch, from);
-    progressBar rest(list.count(), "Importing data...");
     for(unsigned i = 0; i < list.count(); i++)
     {
         if(list.isDir(i))
@@ -67,12 +77,6 @@ void copyDirToArch(FS_Archive arch, const std::u16string from, const std::u16str
 
             copyFiletoArch(arch, sdPath, archPath, mode);
         }
-
-        sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-            rest.draw(i);
-        sf2d_end_frame();
-
-        sf2d_swapbuffers();
     }
 }
 
@@ -104,7 +108,8 @@ bool restoreData(const titleData dat, FS_Archive arch, int mode)
 
     copyDirToArch(arch, sdPath, archPath, mode);
 
-    if(mode!=MODE_EXTDATA && mode!=MODE_BOSS && mode!=MODE_SHARED)
+    //If we're not restoring some kind of extdata, commit save data
+    if(mode!=MODE_EXTDATA && mode!=MODE_BOSS && mode != MODE_SHARED)
     {
         Result res = FSUSER_ControlArchive(arch, ARCHIVE_ACTION_COMMIT_SAVE_DATA, NULL, 0, NULL, 0);
         if(res)

@@ -14,4 +14,12 @@ void createTitleDir(const titleData t, int mode);
 void deleteSV(const titleData t);
 std::u16string getPath(int mode);
 
+//This detects if running under something as 3dsv
+bool runningUnder();
+
+//this is only used running under a title
+void fsStart();
+
+//same, only closing
+void fsEnd();
 #endif // UTIL_G

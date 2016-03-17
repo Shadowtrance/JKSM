@@ -11,9 +11,6 @@
 #include "ui.h"
 #include "date.h"
 
-//this is the buffer size used for copying
-#define buff_size 51200
-
 void copyFileToSD(FS_Archive save, const std::u16string from, const std::u16string to)
 {
     Handle sdFile, saveFile;
@@ -21,14 +18,16 @@ void copyFileToSD(FS_Archive save, const std::u16string from, const std::u16stri
     Result res = FSUSER_OpenFile(&saveFile, save, fsMakePath(PATH_UTF16, from.data()), FS_OPEN_READ, 0);
     if(res)
     {
-        //error
+        showMessage("Error opening save file for reading!");
+        logWriteError("Error opening save file", res);
         return;
     }
 
     res = FSUSER_OpenFile(&sdFile, sdArch, fsMakePath(PATH_UTF16, to.data()), FS_OPEN_CREATE | FS_OPEN_WRITE, 0);
     if(res)
     {
-        //error
+        showMessage("Error creating/opening SD file!");
+        logWriteError("Error creating/opening sd", res);
         return;
     }
 
@@ -79,12 +78,12 @@ void copyDirToSD(FS_Archive save, const std::u16string from, const std::u16strin
         {
             std::u16string newFrom = from;
             newFrom += list.retItem(i);
-            newFrom += U'/';
+            newFrom += L'/';
 
             std::u16string newTo = to;
             newTo += list.retItem(i);
             FSUSER_CreateDirectory(sdArch, fsMakePath(PATH_UTF16, newTo.data()), 0);
-            newTo += U'/';
+            newTo += L'/';
 
             copyDirToSD(save, newFrom, newTo);
         }
@@ -103,17 +102,23 @@ void copyDirToSD(FS_Archive save, const std::u16string from, const std::u16strin
 
 bool backupData(const titleData dat, FS_Archive arch, int mode, bool autoName)
 {
+    //This is our path to SD folder. UTF16
     std::u16string pathOut;
+    //holds name from user
     std::u16string slot;
+
+    //if auto, just use date/time
     if(autoName)
-        slot = tou16(GetDate(FORMAT_DMY));
+        slot = tou16(GetDate(FORMAT_YDM));
     else
         slot = tou16(GetSlot(true, dat, mode).c_str());
 
     if(slot.data()[0]==0)
         return false;
 
+    //get path returns path to /JKSV/[DIR]
     pathOut = getPath(mode);
+    //add safe name with forbidden chars removed
     pathOut += dat.nameSafe;
     pathOut += L'/';
 

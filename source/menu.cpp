@@ -6,6 +6,7 @@
 
 #include "global.h"
 #include "menu.h"
+#include "img.h"
 
 #define RED RGBA8(255, 0, 0, 255)
 #define BLUE RGBA8(0, 0, 255, 255)
@@ -13,12 +14,23 @@
 #define DARK_GRAY RGBA8(128, 128, 128, 255)
 #define FONT_SIZE 12
 
+sf2d_texture *arrow;
+
+void loadArrow()
+{
+    arrow = sf2d_create_texture_mem_RGBA8(arrow_img.pixel_data, arrow_img.width, arrow_img.height, TEXFMT_RGBA8, SF2D_PLACE_RAM);
+}
+
+void freeArrow()
+{
+    sf2d_free_texture(arrow);
+}
+
 menuItem::menuItem(const std::u32string s)
 {
     selected = false;
     text.assign(s);
 }
-
 
 menu::menu(unsigned sx, unsigned sy, bool sMulti)
 {
@@ -83,13 +95,13 @@ void menu::draw()
         //\x1b[COLOR;1m = bold color.
         if(i == selected)
         {
-            sftd_draw_text(yashi, x, y + ((i - start) * 14), RED, 12, "=>");
-            sftd_draw_wtext(yashi, x + 32, y + ((i - start) * 14), GREEN, FONT_SIZE, (wchar_t *)opts[i].text.data());
+            sf2d_draw_texture(arrow, x, (y + 3) + (i - start) * 14);
+            sftd_draw_wtext(yashi, x + 24, y + ((i - start) * 14), GREEN, FONT_SIZE, (wchar_t *)opts[i].text.data());
         }
         else if(opts[i].selected)
-            sftd_draw_wtext(yashi, x + 32, y + ((i - start) * 14), RGBA8(200, 0, 0, 255), 12, (wchar_t *)opts[i].text.data());
+            sftd_draw_wtext(yashi, x + 24, y + ((i - start) * 14), RGBA8(200, 0, 0, 255), 12, (wchar_t *)opts[i].text.data());
         else
-            sftd_draw_wtext(yashi, x + 32, y + ((i - start) * 14), DARK_GRAY, FONT_SIZE, (wchar_t *)opts[i].text.data());
+            sftd_draw_wtext(yashi, x + 24, y + ((i - start) * 14), DARK_GRAY, FONT_SIZE, (wchar_t *)opts[i].text.data());
     }
 
 }

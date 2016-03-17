@@ -10,7 +10,7 @@ class textbox
         void draw(bool Pressed);
 
         int X, Y;
-    private:
+    protected:
         int Width, Height;
         std::string Text;
 };

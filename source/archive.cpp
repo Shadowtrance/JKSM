@@ -7,7 +7,6 @@
 
 //All the information used here was found on 3dbrew.org
 //thank them too.
-
 bool openSaveArch(FS_Archive *out, const titleData dat, bool showError)
 {
     //binary path
@@ -20,6 +19,7 @@ bool openSaveArch(FS_Archive *out, const titleData dat, bool showError)
     path[2] = dat.high;
 
     //setup archive info
+    Handle fs;
     *out = (FS_Archive){ARCHIVE_USER_SAVEDATA, (FS_Path){PATH_BINARY, 12, path}};
     Result res = FSUSER_OpenArchive(out);
     if(res)
@@ -27,6 +27,18 @@ bool openSaveArch(FS_Archive *out, const titleData dat, bool showError)
         if(showError)
             showMessage("Error opening save archive!");
         logWriteError("Error opening save archive", res);
+        return false;
+    }
+
+    return true;
+}
+
+bool openCartArch(FS_Archive *out)
+{
+    *out = (FS_Archive){ARCHIVE_GAMECARD_SAVEDATA, (FS_Path){PATH_EMPTY, 0, ""}};
+    Result res = FSUSER_OpenArchive(out);
+    if(res)
+    {
         return false;
     }
 

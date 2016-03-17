@@ -23,6 +23,18 @@ enum
     _back
 };
 
+//We can try two different ways with carts
+bool openCart(FS_Archive *out, const titleData dat)
+{
+    //if first way works
+    if(openCartArch(out))
+        return true;
+    else if(openSaveArch(out, dat, true))
+        return true;
+
+    return false;
+}
+
 void cartManager()
 {
     //Check if there is a cart
@@ -56,11 +68,12 @@ void cartManager()
     }
 
     //top bar info
+    //wchar_t for 3ds is 32bit.
     std::u32string info = tou32(cartData.name);
     info += U" : Cart";
 
     //menu
-    menu cartMenu(128, 80, false);
+    menu cartMenu(136, 80, false);
     cartMenu.addItem("Export Save");
     cartMenu.addItem("Import Save");
     cartMenu.addItem("Delete Save Data");
@@ -70,7 +83,7 @@ void cartManager()
 
     bool loop = true;
 
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 
@@ -83,21 +96,23 @@ void cartManager()
             FS_Archive archive;
             switch(cartMenu.getSelected())
             {
+                //basically, we switch whats selected in the menu
+                //and only continue if we can open the archive.
                 case _expSave:
-                    if(openSaveArch(&archive, cartData, true))
+                    if(openCart(&archive, cartData))
                     {
                         createTitleDir(cartData, MODE_SAVE);
                         backupData(cartData, archive, MODE_SAVE, false);
                     }
                     break;
                 case _impSave:
-                    if(openSaveArch(&archive, cartData, true))
+                    if(openCart(&archive, cartData))
                     {
                         restoreData(cartData, archive, MODE_SAVE);
                     }
                     break;
                 case _delSave:
-                    if(openSaveArch(&archive, cartData, true) && confirm("This will delete save data present on cart. Continue?"))
+                    if(openCart(&archive, cartData) && confirm("This will delete save data present on cart. Continue?"))
                     {
                         FSUSER_DeleteDirectoryRecursively(archive, fsMakePath(PATH_ASCII, "/"));
                         FSUSER_ControlArchive(archive, ARCHIVE_ACTION_COMMIT_SAVE_DATA, NULL, 0, NULL, 0);
@@ -120,6 +135,7 @@ void cartManager()
                     loop = false;
                     break;
             }
+            FSUSER_CloseArchive(&archive);
         }
         else if(up & KEY_B)
             break;

@@ -8,6 +8,8 @@
 #include "dir.h"
 #include "ui.h"
 
+Handle fs;
+
 std::u32string tou32(const std::u16string t)
 {
     char32_t *tmp = new char32_t[256];
@@ -62,12 +64,12 @@ std::u16string tou16(const char *t)
     return ret;
 }
 
-//this is bad
 std::string toString(const std::u16string t)
 {
     std::string ret;
-    for(unsigned i = 0; i < t.length();i++)
-        ret += t.data()[i];
+
+    for(unsigned i = 0; i < t.length(); i++)
+        ret += t[i];
 
     return ret;
 }
@@ -114,4 +116,32 @@ std::u16string getPath(int mode)
             break;
     }
     return ret;
+}
+
+bool runningUnder()
+{
+    aptOpenSession();
+    u64 id;
+    APT_GetProgramID(&id);
+    aptCloseSession();
+
+    //check if it's using its own ID
+    if(id==0x0004000002c23200)
+        return false;
+
+    return true;
+}
+
+//Gets the handle of what it's running under and tries to use it
+//I haven't found a title that works yet. Maybe I'm doing this wrong?
+void fsStart()
+{
+   srvGetServiceHandleDirect(&fs, "fs:USER");
+   FSUSER_Initialize(fs);
+   fsUseSession(fs, false);
+}
+
+void fsEnd()
+{
+    fsEndUseSession();
 }

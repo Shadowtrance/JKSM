@@ -10,10 +10,9 @@
 #include "date.h"
 #include "textbox.h"
 
-using namespace std;
-
-string GetString()
+std::string GetString()
 {
+    //this object takes care of a lot
     KeyBoard Str;
     textbox Back(0, 0, 320, 240, "");
 
@@ -30,19 +29,19 @@ string GetString()
 
         if((KeyUp & KEY_START) || (KeyUp & KEY_A))
         {
-            return Str.RetString();
+            return Str.RetString();//return what's entered
         }
         else if(KeyUp & KEY_L)
         {
-            Str.Add(GetDate(FORMAT_DMY));
+            Str.Add(GetDate(FORMAT_YDM));//add date
         }
         else if(KeyUp & KEY_R)
         {
-            Str.Add(GetDate(FORMAT_MDY));
+            Str.Add(GetDate(FORMAT_YMD));
         }
         else if(KeyUp & KEY_B)
         {
-            return "";
+            return "";//return nothing.
         }
 
         sf2d_start_frame(GFX_TOP, GFX_LEFT);

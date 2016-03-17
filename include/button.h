@@ -7,6 +7,13 @@
 
 #include "textbox.h"
 
+/*
+This is those buttons I use.
+sText = what button says
+sX = X position
+sY = Y position
+They're currently 96x32, but that can be changed and probably will be
+*/
 class button
 {
     public:

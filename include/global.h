@@ -14,6 +14,9 @@
 #define MODE_BOSS 3
 #define MODE_SHARED 4
 
+//buffer size used for copying
+#define buff_size 51200
+
 //This is the font used to print everything
 extern sftd_font *yashi;
 

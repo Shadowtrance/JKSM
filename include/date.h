@@ -1,8 +1,8 @@
 #ifndef DATE_H
 #define DATE_H
 
-#define FORMAT_DMY 0
-#define FORMAT_MDY 1
+#define FORMAT_YDM 0
+#define FORMAT_YMD 1
 
 #include <string>
 

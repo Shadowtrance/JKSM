@@ -39,8 +39,7 @@ class menu
         int x, y, selected, start;
 };
 
-size_t u8Length(const uint8_t *d);
-size_t u16Length(const uint16_t *d);
-size_t u32Length(const uint32_t *d);
+void loadArrow();
+void freeArrow();
 
 #endif // MENU_H

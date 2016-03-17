@@ -4,8 +4,7 @@
 
 #include "date.h"
 
-using namespace std;
-
+//This returns the date as a c string
 char *GetDate(int Format)
 {
     char *Ret = new char[24];
@@ -16,12 +15,12 @@ char *GetDate(int Format)
 
     switch(Format)
     {
-        case FORMAT_DMY:
+        case FORMAT_YDM:
         {
             sprintf(Ret, "%04d%02d%02d@%02d%02d", Time->tm_year + 1900, Time->tm_mday, Time->tm_mon + 1, Time->tm_hour, Time->tm_min);
             break;
         }
-        case FORMAT_MDY:
+        case FORMAT_YMD:
         {
             sprintf(Ret, "%04d%02d%02d@%02d%02d", Time->tm_year + 1900, Time->tm_mon + 1, Time->tm_mday, Time->tm_hour, Time->tm_min);
             break;
@@ -31,9 +30,10 @@ char *GetDate(int Format)
     return Ret;
 }
 
-string RetTime()
+//this returns the time for the top bar
+std::string RetTime()
 {
-    string Ret;
+    std::string Ret;
 
     time_t Raw;
     time(&Raw);
@@ -45,5 +45,5 @@ string RetTime()
 
     Ret = Tmp;
 
-    return Tmp;
+    return Ret;
 }

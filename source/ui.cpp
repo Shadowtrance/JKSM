@@ -15,7 +15,7 @@ bool confirm(const char *t)
     button yes("Yes (A)", 40, 176);
     button no("No (B)", 180, 176);
     textbox back(24, 24, 280, 200, t);
-    while(aptMainLoop())
+    while(true)
     {
         hidScanInput();
 
@@ -52,7 +52,7 @@ void showMessage(const char *t)
     button ok("OK (A)", 116, 176);
     textbox back(24, 24, 280, 200, t);
 
-    while(aptMainLoop())
+    while(true)
     {
         hidScanInput();
 

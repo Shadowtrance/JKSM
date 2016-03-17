@@ -9,6 +9,11 @@
 #include "archive.h"
 #include "ui.h"
 
+/*These are extra things I added.
+I wasn't sure if there was a cia coin setter
+besides Nintendo's official one.
+*/
+
 void maxPlayCoins()
 {
     FS_Archive shared;
@@ -22,16 +27,21 @@ void maxPlayCoins()
 
         u8 *buff = new u8[size];
 
+        //Read file to buff
         FSFILE_Read(coin, NULL, 0, buff, size);
 
+        //Overwrite 0x4 and 0x5 with 300
         unsigned coinAmount = 300;
         buff[0x4] = coinAmount;
         buff[0x5] = coinAmount >> 8;
 
+        //write it back
         FSFILE_Write(coin, NULL, 0, buff, size, FS_WRITE_FLUSH);
 
+        //close gamecoin.dat
         FSFILE_Close(coin);
 
+        //free memory used by buff
         delete[] buff;
 
         showMessage("Play coins set to 300!");
@@ -78,7 +88,7 @@ enum
 
 void extrasMenu()
 {
-    menu extra(128, 80, false);
+    menu extra(136, 80, false);
     extra.addItem("300 Play coins");
     extra.addItem("0 Play coins");
     extra.addItem("Back");
@@ -86,7 +96,7 @@ void extrasMenu()
     bool loop = true;
 
     std::u32string info = U"Extras";
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 

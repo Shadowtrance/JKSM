@@ -14,6 +14,7 @@
 #include "ui.h"
 #include "button.h"
 #include "textbox.h"
+#include "auto.h"
 
 void sdBackupMenu(const titleData dat);
 
@@ -22,7 +23,7 @@ void sdStartSelect()
     if(sdTitle.size() < 1)
         return;
 
-    menu titleMenu(80, 20, true);
+    menu titleMenu(88, 20, true);
     for(unsigned i = 0; i < sdTitle.size(); i++)
         titleMenu.addItem(sdTitle[i].name);
 
@@ -37,7 +38,7 @@ void sdStartSelect()
     //Help button
     button help("Help", 224, 208);
 
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 
@@ -59,57 +60,11 @@ void sdStartSelect()
         }
         else if(up & KEY_Y)
         {
-            showMessage("This can take a few minutes depending on how many titles are selected.");
-            progressBar autoDump((float)titleMenu.getSelectCount(), "Copying saves.");
-            float dumpCount = 0;
-            for(unsigned i = 0; i < titleMenu.getSize(); i++)
-            {
-                bool dumped = false;
-                FS_Archive saveArch;
-                if(titleMenu.optSelected(i) && openSaveArch(&saveArch, sdTitle[i], false))
-                {
-                    createTitleDir(sdTitle[i], MODE_SAVE);
-                    backupData(sdTitle[i], saveArch, MODE_SAVE, true);
-                    dumpCount++;
-                    dumped = true;
-                }
-                FSUSER_CloseArchive(&saveArch);
-
-                FS_Archive extArch;
-                if(titleMenu.optSelected(i) && openExtdata(&extArch, sdTitle[i], false))
-                {
-                    createTitleDir(sdTitle[i], MODE_EXTDATA);
-                    backupData(sdTitle[i], extArch, MODE_EXTDATA, true);
-                    if(!dumped)
-                        dumpCount++;
-                }
-                FSUSER_CloseArchive(&extArch);
-
-                sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);
-                    autoDump.draw(dumpCount);
-                sf2d_end_frame();
-                sf2d_swapbuffers();
-            }
-            showMessage("Complete!");
+            autoBackup(titleMenu);
         }
         else if(up & KEY_X)
         {
-            for(unsigned i = 0; i < titleMenu.getSize(); i++)
-            {
-                FS_Archive saveArch;
-                if(titleMenu.optSelected(i) && openSaveArch(&saveArch, sdTitle[i], false))
-                {
-                    restoreData(sdTitle[i], saveArch, MODE_SAVE);
-                }
-                FSUSER_CloseArchive(&saveArch);
-
-                FS_Archive extArch;
-                if(titleMenu.optSelected(i) && openExtdata(&extArch, sdTitle[i], false))
-                {
-                    restoreData(sdTitle[i], extArch, MODE_EXTDATA);
-                }
-                FSUSER_CloseArchive(&extArch);
-            }
+            autoRestore(titleMenu);
         }
         else if(up & KEY_B)
             break;
@@ -140,7 +95,7 @@ enum
 
 void sdBackupMenu(const titleData dat)
 {
-    menu backupMenu(128, 80, false);
+    menu backupMenu(136, 80, false);
     backupMenu.addItem("Export Save");
     backupMenu.addItem("Import Save");
     backupMenu.addItem("Delete Save Data");
@@ -152,7 +107,7 @@ void sdBackupMenu(const titleData dat)
 
     std::u32string info = tou32(dat.name);
     info += U" : SD/CIA";
-    while(aptMainLoop() && loop)
+    while(loop)
     {
         hidScanInput();
 
@@ -208,8 +163,8 @@ void sdBackupMenu(const titleData dat)
             break;
 
         sf2d_start_frame(GFX_TOP, GFX_LEFT);
-        drawTopBar(info);
-        backupMenu.draw();
+            drawTopBar(info);
+            backupMenu.draw();
         sf2d_end_frame();
 
         sf2d_start_frame(GFX_BOTTOM, GFX_LEFT);

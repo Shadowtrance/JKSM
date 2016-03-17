@@ -60,6 +60,7 @@ bool titleData::init(u64 _id, u8 mediaType)
     high = (u32)(id >> 32);
     unique = (low >> 8);
 
+    //some titles use a different id for extdata
     extdata = extdataRedirect(low);
 
     smdh = loadSMDH(low, high, media);
@@ -69,7 +70,7 @@ bool titleData::init(u64 _id, u8 mediaType)
     name.assign((char16_t *)smdh->applicationTitles[1].shortDescription);
     nameSafe = safeTitle(name);
 
-    //Product codee
+    //Product code
     char tmp[32];
     AM_GetTitleProductCode(media, id, tmp);
     prodCode.assign(tmp);

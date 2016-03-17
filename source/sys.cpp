@@ -7,12 +7,15 @@
 #include "global.h"
 #include "textbox.h"
 #include "ui.h"
+#include "menu.h"
+#include "util.h"
 
 void loadImgs()
 {
     bar = sf2d_create_texture_mem_RGBA8(TopBar.pixel_data, TopBar.width, TopBar.height, TEXFMT_RGBA8, SF2D_PLACE_RAM);
     textboxInit();
     progressBarInit();
+    loadArrow();
 }
 
 void freeImgs()
@@ -20,6 +23,7 @@ void freeImgs()
     sf2d_free_texture(bar);
     textboxExit();
     progressBarExit();
+    freeArrow();
 }
 
 //I just use this so I don't have to type so much. I'm lazy
@@ -50,8 +54,6 @@ void sysInit()
     aptInit();
     srvInit();
     hidInit();
-    fsInit();
-    sdmcInit();
 
     //Open SDMC archive
     sdArch = (FS_Archive){ARCHIVE_SDMC, (FS_Path){PATH_EMPTY, 1, ""}};
@@ -69,10 +71,19 @@ void sysInit()
     createDir("/JKSV/SysSave");
     createDir("/JKSV/Boss");
     createDir("/JKSV/Shared");
+
+    //I decided to leave this in this time around
+    //It detects if it's running by itself(CIA) or under something(3DSX)
+    //I haven't found a title yet that gives it the right permissions
+    //It's also possible that I'm doing it wrong.
+    if(runningUnder())
+        fsStart();
 }
 
 void sysExit()
 {
+    if(runningUnder())
+        fsEnd();
     //Close SDMC
     FSUSER_CloseArchive(&sdArch);
 
@@ -81,8 +92,6 @@ void sysExit()
     aptExit();
     srvExit();
     hidExit();
-    fsExit();
-    sdmcExit();
 
     freeImgs();
 

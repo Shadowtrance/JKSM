@@ -37,7 +37,7 @@ std::string GetSlot(bool nSlot, const titleData dat, int Mode)
     if(list.count()==0 && !nSlot)
         return "";
 
-    menu getSlot(80, 20, false);
+    menu getSlot(88, 20, false);
     //Go through dirs found and add them to menu
     for(unsigned i = 0; i < list.count(); i++)
     {

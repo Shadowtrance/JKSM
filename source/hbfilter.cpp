@@ -3,6 +3,8 @@
 
 #include "hbfilter.h"
 
+//These are the homebrew IDs from the gbatemp thread - 3Dsurfer.
+//3DSurfer and Picross E3 use the same ID
 u32 filterID[] =
 {
     0x110100,
@@ -68,7 +70,7 @@ bool hbFilter(u64 id)
 {
     u32 low = (u32)id;
     //it's easier to filter retroarch this way
-    char tmp[32];
+    char tmp[16];
     AM_GetTitleProductCode(MEDIATYPE_SD, id, tmp);
     std::string test;
     test.assign(tmp, 0, 5);
