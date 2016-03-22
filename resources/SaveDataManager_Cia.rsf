@@ -1,6 +1,6 @@
 BasicInfo:
-  Title                   : "JK's Save Manager"
-  ProductCode             : "CTR-HB-JKSV"
+  Title                   : "SaveDataManager"
+  ProductCode             : "CTR-HB-SDMA"
   Logo                    : Nintendo # Nintendo / Licensed / Distributed / iQue / iQueForSystem
 
 RomFs:
@@ -8,14 +8,14 @@ RomFs:
 
 TitleInfo:
   Category                : Application
-  UniqueId                : 0x2c232
+  UniqueId                : 0x2c239
 
 Option:
   UseOnSD                 : true # true if App is to be installed to SD
   FreeProductCode         : true # Removes limitations on ProductCode
   MediaFootPadding        : false # If true CCI files are created with padding
   EnableCrypt             : false # Enables encryption for NCCH and CIA
-  EnableCompress          : $(APP_COMP) # Compresses where applicable (currently only exefs:/.code)
+  EnableCompress          : false # Compresses where applicable (currently only exefs:/.code)
   
 AccessControlInfo:
   CoreVersion                   : 2
@@ -28,7 +28,7 @@ AccessControlInfo:
   ReleaseKernelMinor            : "33" 
 
   # ExtData
-  UseExtSaveData                : false # enables ExtData       
+  UseExtSaveData                : false # enables ExtData
   #ExtSaveDataId                : 0x300 # only set this when the ID is different to the UniqueId
 
   # FS:USER Archive Access Permissions

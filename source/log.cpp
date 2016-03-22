@@ -10,8 +10,8 @@ u64 logOffset = 0;
 
 void logOpen()
 {
-    FSUSER_DeleteFile(sdArch, fsMakePath(PATH_ASCII, "/JKSV/JKSV.log"));
-    FSUSER_OpenFile(&logHandle, sdArch, fsMakePath(PATH_ASCII, "/JKSV/JKSV.log"), FS_OPEN_CREATE | FS_OPEN_WRITE, 0);
+    FSUSER_DeleteFile(sdArch, fsMakePath(PATH_ASCII, "/SaveDataManager/SaveDataManager.log"));
+    FSUSER_OpenFile(&logHandle, sdArch, fsMakePath(PATH_ASCII, "/SaveDataManager/SaveDataManager.log"), FS_OPEN_CREATE | FS_OPEN_WRITE, 0);
 }
 
 void logClose()

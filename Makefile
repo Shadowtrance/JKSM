@@ -26,13 +26,13 @@ include $(DEVKITARM)/3ds_rules
 #     - icon.png
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
-TARGET      := JKSM
+TARGET      := $(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
 
-APP_TITLE		:= JK's Save Manager
+APP_TITLE		:= SaveDataManager
 APP_DESCRIPTION	:= Save Manager
 APP_AUTHOR		:= JK
 
@@ -53,6 +53,10 @@ ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 LIBS	:= -lsftd -lfreetype -lpng -lz -lsf2d -lctru -lm
+
+ifeq ($(OS),Windows_NT)
+	MAKEROM = $(DEVKITARM)/bin/makerom.exe
+endif
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -129,28 +133,12 @@ all: $(BUILD)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@-7z a $(OUTPUT)-`date +'%Y%m%d-%H%M%S'`.zip $(OUTPUT).3dsx $(OUTPUT).smdh $(OUTPUT).cia $(OUTPUT).3ds
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).3dsx $(OUTPUT).smdh $(TARGET).elf $(TARGET)-strip.elf $(TARGET).cia $(TARGET).3ds
-#---------------------------------------------------------------------------------
-$(TARGET)-strip.elf: $(BUILD)
-	@$(STRIP) $(TARGET).elf -o $(TARGET)-strip.elf
-#---------------------------------------------------------------------------------
-cci: $(TARGET)-strip.elf
-	@makerom -f cci -rsf resources/$(TARGET).rsf -target d -exefslogo -elf $(TARGET)-strip.elf -o $(TARGET).3ds
-	@echo "built ... sf2d_sample.3ds"
-#---------------------------------------------------------------------------------
-cia: $(TARGET)-strip.elf
-	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -exefslogo -target t
-	@echo "built ... sf2d_sample.cia"
-#---------------------------------------------------------------------------------
-send: $(BUILD)
-	@3dslink $(TARGET).3dsx
-#---------------------------------------------------------------------------------
-run: $(BUILD)
-	@citra $(TARGET).3dsx
+	@rm -fr $(BUILD) $(OUTPUT).3dsx $(OUTPUT).smdh $(OUTPUT).elf $(OUTPUT).cia $(OUTPUT).3ds
 
 #---------------------------------------------------------------------------------
 else
@@ -160,13 +148,17 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-ifeq ($(strip $(NO_SMDH)),)
-$(OUTPUT).3dsx	:	$(OUTPUT).elf $(OUTPUT).smdh
-else
-$(OUTPUT).3dsx	:	$(OUTPUT).elf
-endif
+$(OUTPUT).3dsx	:	$(OUTPUT).elf $(OUTPUT).smdh $(OUTPUT).cia $(OUTPUT).3ds
 
 $(OUTPUT).elf	:	$(OFILES)
+
+$(OUTPUT).cia	: 	$(OUTPUT).elf
+	@$(MAKEROM) -f cia -o $(OUTPUT).cia -rsf $(TOPDIR)/resources/SaveDataManager_Cia.rsf -target t -exefslogo -elf $(OUTPUT).elf -icon $(TOPDIR)/resources/icon.icn -banner $(TOPDIR)/resources/banner.bnr
+	@echo "built ... $(notdir $@)"
+
+$(OUTPUT).3ds	: 	$(OUTPUT).elf
+	@$(MAKEROM) -f cci -o $(OUTPUT).3ds -rsf $(TOPDIR)/resources/SaveDataManager_3ds.rsf -target d -exefslogo -elf $(OUTPUT).elf -icon $(TOPDIR)/resources/icon.icn -banner $(TOPDIR)/resources/banner.bnr
+	@echo "built ... $(notdir $@)"
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data

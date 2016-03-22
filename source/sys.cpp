@@ -60,17 +60,17 @@ void sysInit()
     Result Res = FSUSER_OpenArchive(&sdArch);
 
     //Create output directories
-    createDir("/JKSV");
+    createDir("/SaveDataManager");
 
-    //These are just in case they used an earlier build. Just moves the folders inside /JKSV
-    FSUSER_RenameDirectory(sdArch, fsMakePath(PATH_ASCII, "/Saves/"), sdArch, fsMakePath(PATH_ASCII, "/JKSV/Saves/"));
-    FSUSER_RenameDirectory(sdArch, fsMakePath(PATH_ASCII, "/ExtData/"), sdArch, fsMakePath(PATH_ASCII, "/JKSV/ExtData/"));
+    //These are just in case they used an earlier build. Just moves the folders inside /SaveDataManager
+    FSUSER_RenameDirectory(sdArch, fsMakePath(PATH_ASCII, "/Saves/"), sdArch, fsMakePath(PATH_ASCII, "/SaveDataManager/Saves/"));
+    FSUSER_RenameDirectory(sdArch, fsMakePath(PATH_ASCII, "/ExtData/"), sdArch, fsMakePath(PATH_ASCII, "/SaveDataManager/ExtData/"));
 
-    createDir("/JKSV/Saves");
-    createDir("/JKSV/ExtData");
-    createDir("/JKSV/SysSave");
-    createDir("/JKSV/Boss");
-    createDir("/JKSV/Shared");
+    createDir("/SaveDataManager/Saves");
+    createDir("/SaveDataManager/ExtData");
+    createDir("/SaveDataManager/SysSave");
+    createDir("/SaveDataManager/Boss");
+    createDir("/SaveDataManager/Shared");
 
     //I decided to leave this in this time around
     //It detects if it's running by itself(CIA) or under something(3DSX)

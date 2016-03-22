@@ -100,19 +100,19 @@ std::u16string getPath(int mode)
     switch(mode)
     {
         case MODE_SAVE:
-            ret = tou16("/JKSV/Saves/");
+            ret = tou16("/SaveDataManager/Saves/");
             break;
         case MODE_EXTDATA:
-            ret = tou16("/JKSV/ExtData/");
+            ret = tou16("/SaveDataManager/ExtData/");
             break;
         case MODE_BOSS:
-            ret = tou16("/JKSV/Boss/");
+            ret = tou16("/SaveDataManager/Boss/");
             break;
         case MODE_SYSSAVE:
-            ret = tou16("/JKSV/SysSave/");
+            ret = tou16("/SaveDataManager/SysSave/");
             break;
         case MODE_SHARED:
-            ret = tou16("/JKSV/Shared/");
+            ret = tou16("/SaveDataManager/Shared/");
             break;
     }
     return ret;
@@ -126,7 +126,7 @@ bool runningUnder()
     aptCloseSession();
 
     //check if it's using its own ID
-    if(id==0x0004000002c23200)
+    if(id==0x0004000002c23900)
         return false;
 
     return true;

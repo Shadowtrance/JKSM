@@ -116,7 +116,7 @@ bool backupData(const titleData dat, FS_Archive arch, int mode, bool autoName)
     if(slot.data()[0]==0)
         return false;
 
-    //get path returns path to /JKSV/[DIR]
+    //get path returns path to /SaveDataManager/[DIR]
     pathOut = getPath(mode);
     //add safe name with forbidden chars removed
     pathOut += dat.nameSafe;

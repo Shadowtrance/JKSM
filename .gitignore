@@ -3,7 +3,6 @@ test/
 *.o
 *.elf
 *.3dsx
-*.png
 *.wav
 *.cbp
 *.layout

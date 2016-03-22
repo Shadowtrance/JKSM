@@ -45,9 +45,9 @@ void sdTitlesInit()
 {
     //for refresh games
     sdTitle.clear();
-    if(fexists("/JKSV/titles"))
+    if(fexists("/SaveDataManager/titles"))
     {
-        FILE *read = dbOpen("/JKSV/titles");
+        FILE *read = dbOpen("/SaveDataManager/titles");
         u32 count = dbGetCount(read);
 
         for(unsigned i = 0; i < count; i++)
@@ -88,7 +88,7 @@ void sdTitlesInit()
 
         std::sort(sdTitle.begin(), sdTitle.end(), sortTitles);
 
-        FILE *db = dbCreate("/JKSV/titles");
+        FILE *db = dbCreate("/SaveDataManager/titles");
         dbWriteCount(db, sdTitle.size());
         for(unsigned i = 0; i < sdTitle.size(); i++)
             dbWriteData(db, sdTitle[i]);
@@ -118,9 +118,9 @@ void sysSaveRedirect(titleData *dat)
 void nandTitlesInit()
 {
     nandTitle.clear();
-    if(fexists("/JKSV/nand"))
+    if(fexists("/SaveDataManager/nand"))
     {
-        FILE *read = dbOpen("/JKSV/nand");
+        FILE *read = dbOpen("/SaveDataManager/nand");
         u32 count = dbGetCount(read);
 
         for(unsigned i = 0; i < count; i++)
@@ -163,7 +163,7 @@ void nandTitlesInit()
 
         std::sort(nandTitle.begin(), nandTitle.end(), sortTitles);
 
-        FILE *nand = dbCreate("/JKSV/nand");
+        FILE *nand = dbCreate("/SaveDataManager/nand");
         dbWriteCount(nand, nandTitle.size());
         for(unsigned i = 0; i < nandTitle.size(); i++)
             dbWriteData(nand, nandTitle[i]);

@@ -38,7 +38,7 @@ int main(int argc, const char *argv[])
     nandTitlesInit();
     logOpen();
 
-    std::u32string info = U"JKSM 3/17/2016";
+    std::u32string info = U"SaveDataManager";
 
     menu mainMenu(136, 80, false);
     mainMenu.addItem("Cartridge");
@@ -78,7 +78,7 @@ int main(int argc, const char *argv[])
                     sharedExtManager();
                     break;
                 case _refresh:
-                    FSUSER_DeleteFile(sdArch, fsMakePath(PATH_ASCII, "/JKSV/titles"));
+                    FSUSER_DeleteFile(sdArch, fsMakePath(PATH_ASCII, "/SaveDataManager/titles"));
                     sdTitlesInit();
                     break;
                 case _extra:
